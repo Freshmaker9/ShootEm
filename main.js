@@ -47,12 +47,68 @@ var fpsTime = 0;
 var player = new Player();
 var keyboard = new Keyboard();
 
+var LAYER_COUNT = 2;
+ // number of layers in level
+
+var MAP = {tw:35, th:35}; 
+// specifies size of the level. (tiles wide  x  tiles high)
+
+var TILE = 35;
+ // the width/height of each tile in pixels our pics are different?
+
+var TILESET_TILE = TILE*2;
+// The width/height of a tile in the tileset. Because the images are twice as big as 
+// the grid in our map we need to be careful (but it allows us a bit more flexibility when designing the level)
+
+var TILESET_PADDING = 2; 
+//How many pixels are between the image border and the tile images in the tilemap
+
+var TILESET_SPACING = 2; 
+//how many pixels are between tile images in the tilemap
+
+var TILESET_COUNT_X = 14; 
+//How many columns of tile images are in the tileset
+
+var TILESET_COUNT_Y = 14; 
+//How many rows of tile images are in the tileset
+
+
+var tileset = document.createElement("img");
+tileset.src = "tileset.png";
+
+function drawMap()
+{
+	for(var layerIdx=0; layerIdx<LAYER_COUNT; layerIdx++)
+	{
+		var idx = 0;
+		for( var y = 0; y < level1.layers[layerIdx].height; y++ )
+		{
+			for( var x = 0; x < level1.layers[layerIdx].width; x++ )
+			
+			{
+				if( level1.layers[layerIdx].data[idx] != 0 )
+				{
+					// the tiles in the Tiled map are base 1 (meaning a value of 0 means no tile), so subtract one from the tileset id to get the
+					// correct tile
+					var tileIndex = level1.layers[layerIdx].data[idx] - 1;
+					var sx = TILESET_PADDING + (tileIndex % TILESET_COUNT_X) * (TILESET_TILE + TILESET_SPACING);
+					var sy = TILESET_PADDING + (Math.floor(tileIndex / TILESET_COUNT_Y)) * (TILESET_TILE + TILESET_SPACING);
+					context.drawImage(tileset, sx, sy, TILESET_TILE, TILESET_TILE, x*TILE, (y-1)*TILE, TILESET_TILE, TILESET_TILE);
+				}
+			idx++;
+		}
+	}
+}
+}
+
 function run()
 {
 	context.fillStyle = "#ccc";		
 	context.fillRect(0, 0, canvas.width, canvas.height);
 	
 	var deltaTime = getDeltaTime();
+	
+	drawMap();
 	
 	player.update(deltaTime);
 	player.draw();
