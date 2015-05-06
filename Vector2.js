@@ -6,7 +6,7 @@ var Vector2 = function()
 	this.height = 0;
 }
 
-Vector2.Prototype.Setposition = function(x,y)
+Vector2.Prototype.set = function(x,y)
 {
 	this.x = x;
 	this.y = y;
