@@ -60,21 +60,83 @@ var TILESET_TILE = TILE*2;
 // The width/height of a tile in the tileset. Because the images are twice as big as 
 // the grid in our map we need to be careful (but it allows us a bit more flexibility when designing the level)
 
-var TILESET_PADDING = 2; 
+var TILESET_PADDING = 0; 
 //How many pixels are between the image border and the tile images in the tilemap
 
-var TILESET_SPACING = 2; 
+var TILESET_SPACING = 0; 
 //how many pixels are between tile images in the tilemap
 
-var TILESET_COUNT_X = 14; 
+var TILESET_COUNT_X = 20; 
 //How many columns of tile images are in the tileset
 
-var TILESET_COUNT_Y = 14; 
+var TILESET_COUNT_Y = 20; 
 //How many rows of tile images are in the tileset
+
+// variables to map the layers in our level
+var LAYER_BACKGROUND = 0;
+var LAYER_PLATFORMS = 1;
+var LAYER_LADDERS = 2;
+
+// arbitrary choice for 1m
+var METER = TILE;
+ // very exaggerated gravity (6x)
+var GRAVITY = METER * 9.8 * 6;
+ // max horizontal speed (10 tiles per second)
+var MAXDX = METER * 10;
+ // max vertical speed (15 tiles per second)
+var MAXDY = METER * 15;
+ // horizontal acceleration - take 1/2 second to reach maxdx
+var ACCEL = MAXDX * 2;
+ // horizontal friction - take 1/6 second to stop from maxdx
+var FRICTION = MAXDX * 6;
+ // (a large) instantaneous jump impulse
+var JUMP = METER * 1500;
 
 
 var tileset = document.createElement("img");
-tileset.src = "tileset.png";
+tileset.src = "sprite.png";
+
+
+function cellAtPixelCoord(layer, x, y)
+{
+	if(x<0 || x>SCREEN_WIDTH || y<0)
+		return 1;
+	// let the player drop off bottom of scrren this means death to chuck
+	if (y> SCREEN_HEIGHT)
+		return 0;
+	return cellAtPixelCoord(layer, p2t(x), p2t(y));
+};
+
+function cellAtTileCoord(layer, tx, ty)
+{
+	if(tx<0 || tx>=MAP.tw || ty<0)
+		return 1;
+	// lets the player drop off the bottom of the screen also means death to chuck
+	if(ty>=MAP.th)
+		return 0;
+	return cells[layer][ty][tx];
+};
+
+function tileToPixel (tile)
+{
+	return tile * TILE;
+};
+
+function pixelToTile (pixel)
+{
+	return Math.floor(pixel/TILE);
+};
+
+function bound(value, min, max)
+{
+	if(value < min)
+		return min;
+	if(value > max)
+		return max;
+	return value;
+}
+
+
 
 function drawMap()
 {
@@ -99,6 +161,39 @@ function drawMap()
 		}
 	}
 }
+}
+
+var cells = []; // array that holds a simplified collission data
+
+function initialize()
+{
+	for(var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++) // initializes the collision map
+	{
+		cells[layerIdx] = [];
+		var idx = 0;
+		for(var y = 0; y < level1.layers[layerIdx].height; y++)
+		{
+			cells[layerIdx][y] = [];
+			for(var x = 0; x < level1.layers[layerIdx].width; x++)
+			{
+				if(level1.layers[layerIdx].data[idx] != 0)
+					// for each tile we find in the layer data, we need to create 4 collisions
+ 					// (because our collision squares are 35x35 but the tile in the
+					// level are 70x70)
+				{
+					cells[layerIdx][y][x] = 1;
+					cells[layerIdx][y-1][x] = 1;
+					cells[layerIdx][y-1][x+1] = 1;
+					cells[layerIdx][y][x+1] = 1;
+				}
+				else if(cells[layerIdx][y][x] != 1)
+					{
+						cells[layerIdx][y][x] = 0;
+					}
+			idx++;
+			}
+		}
+	}
 }
 
 function run()
@@ -132,6 +227,8 @@ function run()
 	context.fillText("FPS: " + fps, 5, 20, 100);
 }
 
+
+initialize();
 
 //-------------------- Don't modify anything below here
 
