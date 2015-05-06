@@ -3,13 +3,13 @@ var Player = function()
 this.image= document.createElement("img");
 
 this.position = new Vector2();
-//this.position.set( 9*TILE, 0 * TILE);
+this.position.set = ( 9*35, 0 * 35);
 
 this.width= 159;
 this.height= 163;
 
 this.offset = new Vector2();
-//this.offset.set( -55, -87);
+this.offset.set = ( -55, -87);
 
 this.velocity = new Vector2();
 
@@ -24,20 +24,7 @@ this.image.src= "hero.png";
 
 Player.prototype.update= function(deltaTime)
 {
-// abitrarychoice for 1m
-var METER = TILE;
-// very exaggerated gravity (6x)
-var GRAVITY = METER * 9.8 * 6;
-// max horizontal speed (10 tiles per second)
-var MAXDX = METER * 10;
-// max vertical speed (15 tiles per second)
-var MAXDY = METER * 15;
-// horizontal acceleration -take 1/2 second to reach maxdx
-var ACCEL = MAXDX * 2;
-// horizontal friction -take 1/6 second to stop from maxdx
-var FRICTION = MAXDX * 6;
-// (a large) instantaneous jump impulse
-var JUMP = METER * 1500;
+
 
 
 var left = false;

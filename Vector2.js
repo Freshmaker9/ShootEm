@@ -2,15 +2,16 @@ var Vector2 = function()
 {
 	this.x = 0;
 	this.y = 0;
-	this.width = 0;
-	this.height = 0;
+	
 }
 
-Vector2.Prototype.set = function(x,y)
+Vector2.prototype.set = function(x,y)
 {
 	this.x = x;
 	this.y = y;
 }
+
+
 
 //Vector2.Prototype.CheckCollision = function(Vector2 a_Other)
 //{

@@ -50,7 +50,7 @@ var keyboard = new Keyboard();
 var LAYER_COUNT = 2;
  // number of layers in level
 
-var MAP = {tw:35, th:35}; 
+var MAP = {tw:20, th:15}; 
 // specifies size of the level. (tiles wide  x  tiles high)
 
 var TILE = 35;
@@ -73,9 +73,9 @@ var TILESET_COUNT_Y = 20;
 //How many rows of tile images are in the tileset
 
 // variables to map the layers in our level
-var LAYER_BACKGROUND = 0;
-var LAYER_PLATFORMS = 1;
-var LAYER_LADDERS = 2;
+//var LAYER_BACKGROUND = 0;
+var LAYER_PLATFORMS = 0;
+var LAYER_LADDERS = 1;
 
 // arbitrary choice for 1m
 var METER = TILE;
