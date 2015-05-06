@@ -38,6 +38,8 @@ var ACCEL = MAXDX * 2;
 var FRICTION = MAXDX * 6;
 // (a large) instantaneous jump impulse
 var JUMP = METER * 1500;
+
+
 var left = false;
 var right = false;
 var jump = false;
@@ -109,8 +111,8 @@ var nx= (this.position.x)%TILE; // true if player overlaps right
 var ny= (this.position.y)%TILE; // true if player overlaps below
 var cell = cellAtTileCoord(LAYER_PLATFORMS, tx, ty);
 var cellright= cellAtTileCoord(LAYER_PLATFORMS, tx+ 1, ty);
-var celldown= cellAtTileCoord(LAYER_PLATFORMS, tx, ty + 1);
-var celldiag= cellAtTileCoord(LAYER_PLATFORMS, tx+ 1, ty + 1);
+var celldown = cellAtTileCoord(LAYER_PLATFORMS, tx, ty + 1);
+var celldiag = cellAtTileCoord(LAYER_PLATFORMS, tx+ 1, ty + 1);
 
 // If the player has vertical velocity, then check to see if they have hit a platform
 // below or above, in which case, stop their vertical velocity, and clamp their
@@ -167,7 +169,7 @@ if (this.velocity.y > 0)
 	{
 		if ((cell && !cellright) || (celldown && ! celldiag && ny))
 		{
-			this.position.x = tileToPixel(tx = 1);
+			this.position.x = tileToPixel(tx + 1);
 			this.velocity.x = 0;    // stops horizontal velocity
 		}
 	}

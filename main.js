@@ -99,20 +99,20 @@ tileset.src = "sprite.png";
 
 function cellAtPixelCoord(layer, x, y)
 {
-	if(x<0 || x>SCREEN_WIDTH || y<0)
+	if( x < 0 || x > SCREEN_WIDTH || y < 0 )
 		return 1;
 	// let the player drop off bottom of scrren this means death to chuck
-	if (y> SCREEN_HEIGHT)
+	if (y > SCREEN_HEIGHT)
 		return 0;
-	return cellAtPixelCoord(layer, p2t(x), p2t(y));
+	return cellAtTileCoord(layer, p2t(x), p2t(y));
 };
 
 function cellAtTileCoord(layer, tx, ty)
 {
-	if(tx<0 || tx>=MAP.tw || ty<0)
+	if( tx < 0 || tx >= MAP.tw || ty < 0 )
 		return 1;
 	// lets the player drop off the bottom of the screen also means death to chuck
-	if(ty>=MAP.th)
+	if(ty >= MAP.th)
 		return 0;
 	return cells[layer][ty][tx];
 };
