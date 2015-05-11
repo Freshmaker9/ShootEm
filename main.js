@@ -50,7 +50,10 @@ var keyboard = new Keyboard();
 var LAYER_COUNT = 2;
  // number of layers in level
 
-var MAP = {tw:20, th:15}; 
+var MAP = 
+{
+	tw:20, th:15
+}; 
 // specifies size of the level. (tiles wide  x  tiles high)
 
 var TILE = 35;
@@ -94,45 +97,49 @@ var JUMP = METER * 1500;
 
 
 var tileset = document.createElement("img");
-tileset.src = "sprite.png";
+tileset.src = "tileset.png";
 
 
-function cellAtPixelCoord(layer, x, y)
+function cellAtPixelCoord(layer, x,y)
 {
-	if( x < 0 || x > SCREEN_WIDTH || y < 0 )
-		return 1;
-	// let the player drop off bottom of scrren this means death to chuck
-	if (y > SCREEN_HEIGHT)
-		return 0;
+	if(x<0 || x>SCREEN_WIDTH || y<0)
+	return 1;
+// let the player drop of the bottom of the screen (this means death)
+	if(y>SCREEN_HEIGHT)
+	return 0;
 	return cellAtTileCoord(layer, p2t(x), p2t(y));
 };
 
+
 function cellAtTileCoord(layer, tx, ty)
 {
-	if( tx < 0 || tx >= MAP.tw || ty < 0 )
-		return 1;
-	// lets the player drop off the bottom of the screen also means death to chuck
-	if(ty >= MAP.th)
-		return 0;
+	if(tx<0 || tx>=MAP.tw || ty<0)
+	return 1;
+// let the player drop of the bottom of the screen (this means death)
+	if(ty>=MAP.th)
+	return 0;
 	return cells[layer][ty][tx];
 };
 
-function tileToPixel (tile)
+
+function tileToPixel(tile)
 {
 	return tile * TILE;
 };
 
-function pixelToTile (pixel)
+
+function pixelToTile(pixel)
 {
 	return Math.floor(pixel/TILE);
 };
 
+
 function bound(value, min, max)
 {
 	if(value < min)
-		return min;
+	return min;
 	if(value > max)
-		return max;
+	return max;
 	return value;
 }
 
@@ -163,33 +170,33 @@ function drawMap()
 }
 }
 
-var cells = []; // array that holds a simplified collission data
-
-function initialize()
+var cells = []; // the array that holds our simplified collision data
+function initialize() 
 {
-	for(var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++) // initializes the collision map
-	{
+	for(var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++) 
+	{ // initialize the collision map
 		cells[layerIdx] = [];
 		var idx = 0;
-		for(var y = 0; y < level1.layers[layerIdx].height; y++)
+		for(var y = 0; y < level1.layers[layerIdx].height; y++) 
 		{
 			cells[layerIdx][y] = [];
-			for(var x = 0; x < level1.layers[layerIdx].width; x++)
+			for(var x = 0; x < level1.layers[layerIdx].width; x++) 
 			{
-				if(level1.layers[layerIdx].data[idx] != 0)
-					// for each tile we find in the layer data, we need to create 4 collisions
- 					// (because our collision squares are 35x35 but the tile in the
-					// level are 70x70)
-				{
+				if(level1.layers[layerIdx].data[idx] != 0) 
+					{
+// for each tile we find in the layer data, we need to create 4 collisions
+// (because our collision squares are 35x35 but the tile in the
+// level are 70x70)
 					cells[layerIdx][y][x] = 1;
 					cells[layerIdx][y-1][x] = 1;
 					cells[layerIdx][y-1][x+1] = 1;
 					cells[layerIdx][y][x+1] = 1;
-				}
-				else if(cells[layerIdx][y][x] != 1)
-					{
-						cells[layerIdx][y][x] = 0;
 					}
+				else if(cells[layerIdx][y][x] != 1)
+				{
+// if we haven't set this cell's value, then set it to 0 now
+				cells[layerIdx][y][x] = 0;
+				}
 			idx++;
 			}
 		}
