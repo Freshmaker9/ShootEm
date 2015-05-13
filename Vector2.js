@@ -1,6 +1,6 @@
 var Vector2 = function()
 {
-	this.x = 50;
+	this.x = 0;
 	this.y = 0;
 	
 }

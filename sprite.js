@@ -46,15 +46,18 @@ Sprite.prototype.getFrameHeight = function()
 	return this.animations[this.currentAnimation][this.currentFrame].height;
 };
 
-Sprite.prototype.setLoop = function(loop) {
+Sprite.prototype.setLoop = function(loop) 
+{
 	return this.loop = loop;
 };
 
-Sprite.prototype.setAnimationOffset = function(anim, x, y) {
+Sprite.prototype.setAnimationOffset = function(anim, x, y) 
+{
 	this.offsets[anim].set(x, y);
 };
 
-Sprite.prototype.getAnimationOffset = function() {
+Sprite.prototype.getAnimationOffset = function() 
+{
 	return this.offsets[this.currentAnimation];
 }
 
