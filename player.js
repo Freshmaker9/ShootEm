@@ -13,6 +13,8 @@ var ANIM_WALK_RIGHT = 5;
 //cvar ANIM_SHOOT_RIGHT = 8;
 var ANIM_MAX = 6;
 
+var PLAYER_SPEED = 300;
+
 
 
 var Player = function() 
@@ -79,6 +81,7 @@ this.sprite.update(deltaTime);
 
 if(keyboard.isKeyDown(keyboard.KEY_LEFT) == true) 
 	{
+		this.x -= PLAYER_SPEED * deltaTime;
 		left = true;
 		this.direction = LEFT;
 		if(this.sprite.currentAnimation != ANIM_WALK_LEFT)
@@ -88,6 +91,7 @@ if(keyboard.isKeyDown(keyboard.KEY_LEFT) == true)
 
 else if(keyboard.isKeyDown(keyboard.KEY_RIGHT) == true) 
 	{
+		this.x += PLAYER_SPEED * deltaTime;
 		right = true;
 		this.direction = RIGHT;
 		if(this.sprite.currentAnimation != ANIM_WALK_RIGHT)
@@ -241,7 +245,7 @@ Player.prototype.draw= function()
 	context.save();
 	context.translate(this.x, this.y);
 	//context.rotate(this.rotation);cc
-	this.sprite.draw(context, this.position.x, this.position.y);
-	//context.drawImage(this.image, this.position.x , this.position.y);
+	this.sprite.draw(context, this.position.x - worldOffsetX, this.position.y);
+	//context.drawImage(this.image, this.position.x - worldOffsetX , this.position.y);
 	context.restore();
 	}

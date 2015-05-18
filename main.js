@@ -32,7 +32,7 @@ function getDeltaTime()
 var SCREEN_WIDTH = canvas.width;
 var SCREEN_HEIGHT = canvas.height;
 
-
+var score = 0;
 // some variables to calculate the Frames Per Second (FPS - this tells use
 // how fast our game is running, and allows us to make the game run at a 
 // constant speed)
@@ -52,7 +52,7 @@ var LAYER_COUNT = 2;
 
 var MAP = 
 {
-	tw:20, th:15
+	tw:300, th:15
 }; 
 // specifies size of the level. (tiles wide  x  tiles high)
 
@@ -144,30 +144,64 @@ function bound(value, min, max)
 }
 
 
+var worldOffsetX = 0;
+
 
 function drawMap()
 {
+	var startX = -1;
+	var maxTiles = Math.floor(SCREEN_WIDTH / TILE) + 2;
+	var tileX = pixelToTile(player.position.x);
+	var offsetX = TILE + Math.floor(player.position.x % TILE);
+
+	startX = tileX - Math.floor(maxTiles / 2);
+
+	if(startX < -1)
+	{
+		startX = 0;
+		offsetX = 0;
+
+	}
+
+	if (startX > MAP.tw - maxTiles)
+	{
+		startX = MAP.tw - maxTiles + 1;
+		offsetX = TILE;
+	}
+
+	worldOffsetX = startX * TILE + offsetX;
+
+
+
 	for(var layerIdx=0; layerIdx<LAYER_COUNT; layerIdx++)
 	{
-		var idx = 0;
+		//var idx = 0;
 		for( var y = 0; y < level1.layers[layerIdx].height; y++ )
 		{
-			for( var x = 0; x < level1.layers[layerIdx].width; x++ )
+			var idx = y * level1.layers[layerIdx].width + startX;
+
+			for( var x = startX; x < startX + maxTiles; x++ )
 			
 			{
 				if( level1.layers[layerIdx].data[idx] != 0 )
 				{
 					// the tiles in the Tiled map are base 1 (meaning a value of 0 means no tile), so subtract one from the tileset id to get the
 					// correct tile
+
 					var tileIndex = level1.layers[layerIdx].data[idx] - 1;
-					var sx = TILESET_PADDING + (tileIndex % TILESET_COUNT_X) * (TILESET_TILE + TILESET_SPACING);
-					var sy = TILESET_PADDING + (Math.floor(tileIndex / TILESET_COUNT_Y)) * (TILESET_TILE + TILESET_SPACING);
-					context.drawImage(tileset, sx, sy, TILESET_TILE, TILESET_TILE, x*TILE, (y-1)*TILE, TILESET_TILE, TILESET_TILE);
+					var sx = TILESET_PADDING + (tileIndex % TILESET_COUNT_X) 
+												* (TILESET_TILE + TILESET_SPACING);
+					var sy = TILESET_PADDING + (Math.floor(tileIndex / TILESET_COUNT_Y))
+												 * (TILESET_TILE + TILESET_SPACING);
+
+					context.drawImage (tileset, sx, sy, TILESET_TILE, TILESET_TILE, 
+						(x-startX) *TILE - offsetX, (y-1) * TILE, TILESET_TILE, TILESET_TILE);
+				
 				}
 			idx++;
+			}
 		}
 	}
-}
 }
 
 var cells = []; // the array that holds our simplified collision data
@@ -177,6 +211,7 @@ function initialize()
 	{ // initialize the collision map
 		cells[layerIdx] = [];
 		var idx = 0;
+
 		for(var y = 0; y < level1.layers[layerIdx].height; y++) 
 		{
 			cells[layerIdx][y] = [];
@@ -184,19 +219,20 @@ function initialize()
 			{
 				if(level1.layers[layerIdx].data[idx] != 0) 
 					{
-// for each tile we find in the layer data, we need to create 4 collisions
-// (because our collision squares are 35x35 but the tile in the
-// level are 70x70)
+// the tiles in our map are base 1 so 0 would mean no tile...
+// so if we subtract 1 from the tileset id to get the correct tile
+
 					cells[layerIdx][y][x] = 1;
 					cells[layerIdx][y-1][x] = 1;
 					cells[layerIdx][y-1][x+1] = 1;
 					cells[layerIdx][y][x+1] = 1;
 					}
+
 				else if(cells[layerIdx][y][x] != 1)
-				{
+						{
 // if we haven't set this cell's value, then set it to 0 now
-				cells[layerIdx][y][x] = 0;
-				}
+						cells[layerIdx][y][x] = 0;
+						}
 			idx++;
 			}
 		}
@@ -209,10 +245,17 @@ function run()
 	context.fillRect(0, 0, canvas.width, canvas.height);
 	
 	var deltaTime = getDeltaTime();
-	
+
+
+context.fillStyle = "#8B0000";
+context.font="32px Arial";
+var scoreText = "Score: " + score;
+context.fillText(scoreText, SCREEN_WIDTH - 170, 35);
+
+	player.update(deltaTime);
 	drawMap();
 	
-	player.update(deltaTime);
+	
 	player.draw();
 
 	//context.drawImage(chuckNorris, SCREEN_WIDTH/2 - chuckNorris.width/2, SCREEN_HEIGHT/2 - chuckNorris.height/2);
