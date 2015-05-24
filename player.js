@@ -21,6 +21,7 @@ var Player = function()
 {
 this.sprite = new Sprite("ChuckNorris.png");
 
+
 this.sprite.buildAnimation(12, 8, 165, 126, 0.05,      // idle left
 [0, 1, 2, 3, 4, 5, 6, 7]);
 
@@ -62,7 +63,7 @@ this.jumping = false;
 
 this.direction = RIGHT;
 
-
+this.cooldownTimer = 0;
 //this.image.src= "hero.png";
 };
 
@@ -115,12 +116,22 @@ else
 		}
 	}
 
-if(keyboard.isKeyDown(keyboard.KEY_SPACE) == true) 	
+if(keyboard.isKeyDown(keyboard.KEY_UP) == true) 	
 {
 	jump = true;
 }
 
+if(this.cooldownTimer >0)
+{
+	this.cooldownTimer -= deltaTime;
+}
 
+if (keyboard.isKeyDown(keyboard.KEY_SPACE) == true && this.cooldownTimer <=0) 
+{
+	sfxFire.play();
+	this.cooldownTimer = 0.3; 
+	//bullet()  // shoot a bullet
+}
 
 
 var wasleft = this.velocity.x < 0;
