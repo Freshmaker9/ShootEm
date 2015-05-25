@@ -64,6 +64,7 @@ this.jumping = false;
 this.direction = RIGHT;
 
 this.cooldownTimer = 0;
+
 //this.image.src= "hero.png";
 };
 
@@ -127,18 +128,12 @@ if(this.cooldownTimer >0)
 }
 
 
-var bullets = [];
-var Bullet = function(x, y, moveRight)
-	{
-this.sprite = new Sprite("RocketAnimationTile.png");
-this.sprite.buildAnimation(4, 4, 48, 12, -1, [0]);
-this.sprite.setAnimationOffset(0, 0, 0);
-this.sprite.setLoop(0, false);
-this.position = new Vector2();
-this.position.set(x, y);
-this.velocity = new Vector2();
-this.moveRight = moveRight;
-	if(this.moveRight == true)
+
+if (keyboard.isKeyDown(keyboard.KEY_SPACE) == true && this.cooldownTimer <=0) 
+{
+	Bullet();
+	this.moveRight = moveRight;
+if(this.moveRight == true)
 		{ 
 		this.velocity.set(MAXDX *2, 0);
 		}
@@ -146,14 +141,8 @@ this.moveRight = moveRight;
 		{
 		this.velocity.set(-MAXDX *2, 0);
 		}
-
-	}
-if (keyboard.isKeyDown(keyboard.KEY_SPACE) == true && this.cooldownTimer <=0) 
-{
-	
-	Bullet();
-	sfxFire.play();
-	this.cooldownTimer = 0.3; 	
+	this.cooldownTimer = 0.5; 	
+	bullets.push(Bullet);
 }
 
 

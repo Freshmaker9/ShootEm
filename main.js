@@ -83,6 +83,21 @@ var TILESET_COUNT_X = 20;
 
 var TILESET_COUNT_Y = 20; 
 //How many rows of tile images are in the tileset
+// arbitrary choice for 1m
+var METER = TILE;
+ // very exaggerated gravity (6x)
+var GRAVITY = METER * 9.8 * 6;
+ // max horizontal speed (10 tiles per second)
+var MAXDX = METER * 10;
+ // max vertical speed (15 tiles per second)
+var MAXDY = METER * 15;
+ // horizontal acceleration - take 1/2 second to reach maxdx
+var ACCEL = MAXDX * 2;
+ // horizontal friction - take 1/6 second to stop from maxdx
+var FRICTION = MAXDX * 6;
+ // (a large) instantaneous jump impulse
+var JUMP = METER * 1500;
+
 
 var LAYER_COUNT = 3;
  // number of layers in level
@@ -102,20 +117,6 @@ var LAYER_OBJECT_ENEMIES = 3;
 
 
 
-// arbitrary choice for 1m
-var METER = TILE;
- // very exaggerated gravity (6x)
-var GRAVITY = METER * 9.8 * 6;
- // max horizontal speed (10 tiles per second)
-var MAXDX = METER * 10;
- // max vertical speed (15 tiles per second)
-var MAXDY = METER * 15;
- // horizontal acceleration - take 1/2 second to reach maxdx
-var ACCEL = MAXDX * 2;
- // horizontal friction - take 1/6 second to stop from maxdx
-var FRICTION = MAXDX * 6;
- // (a large) instantaneous jump impulse
-var JUMP = METER * 1500;
 
 
 
