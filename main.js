@@ -33,6 +33,9 @@ var SCREEN_WIDTH = canvas.width;
 var SCREEN_HEIGHT = canvas.height;
 
 var score = 0;
+var lives = 3;
+var skull = document.createElement("img");
+	skull.src = "goldskull.png";
 
 var backgroundMusic;
 var sfxFire;
@@ -47,12 +50,14 @@ var fpsTime = 0;
 // load an image to draw
 //var chuckNorris = document.createElement("img");
 //chuckNorris.src = "hero.png";
-
+var enemy = new Enemy();
 var player = new Player();
 var keyboard = new Keyboard();
+var position = new Vector2();
 
-var LAYER_COUNT = 3;
- // number of layers in level
+
+var tileset = document.createElement("img");
+tileset.src = "tileset.png";
 
 var MAP = 
 {
@@ -79,7 +84,8 @@ var TILESET_COUNT_X = 20;
 var TILESET_COUNT_Y = 20; 
 //How many rows of tile images are in the tileset
 
-
+var LAYER_COUNT = 3;
+ // number of layers in level
 var enemies = [];
 // variables to map the layers in our level
 var LAYER_BACKGROUND = 0;
@@ -91,7 +97,7 @@ var ENEMY_MAXDX = METER * 5;
 var ENEMY_ACCEL = ENEMY_MAXDX * 2;
 
 var LAYER_OBJECT_ENEMIES = 3;
-var LAYER_OBJECT_TRIGGERS = 4;
+//var LAYER_OBJECT_TRIGGERS = 4;
 
 
 
@@ -112,8 +118,7 @@ var FRICTION = MAXDX * 6;
 var JUMP = METER * 1500;
 
 
-var tileset = document.createElement("img");
-tileset.src = "tileset.png";
+
 
 
 function cellAtPixelCoord(layer, x,y)
@@ -191,7 +196,7 @@ function drawMap()
 
 	for(var layerIdx=0; layerIdx<LAYER_COUNT; layerIdx++)
 	{
-		//var idx = 0;
+		var idx = 0;
 		for( var y = 0; y < level1.layers[layerIdx].height; y++ )
 		{
 			var idx = y * level1.layers[layerIdx].width + startX;
@@ -224,7 +229,9 @@ var cells = []; // the array that holds our simplified collision data
 function initialize() 
 {
 	for(var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++) 
-	{ // initialize the collision map
+	{ 
+	// initialize the collision map
+
 		cells[layerIdx] = [];
 
 		var idx = 0;
@@ -232,7 +239,7 @@ function initialize()
 	
 		for(var y = 0; y < level1.layers[layerIdx].height; y++) 
 		{
-			cells[layerIdx][y] = [];
+			cells[layerIdx][y] = []
 			for(var x = 0; x < level1.layers[layerIdx].width; x++) 
 			{
 				if(level1.layers[layerIdx].data[idx] != 0) 
@@ -255,22 +262,39 @@ function initialize()
 			idx++;
 			}
 		}
-	}
+		// add enemies
 idx = 0;
-for(var y = 0; y < level1.layers[LAYER_OBJECT_ENEMIES].height; y++)
-{
-	for(var x = 0; x < level1.layers[LAYER_OBJECT_ENEMIES].width; x++) 
-	{
-		if(level1.layers[LAYER_OBJECT_ENEMIES].data[idx] != 0) 	
+		for(var y = 0; y < level1.layers[LAYER_OBJECT_ENEMIES].height; y++)
 		{
-			var px = tileToPixel(x);
-			var py = tileToPixel(y);
-			var e = new Enemy(px, py);
-			enemies.push(e);
+			for(var x = 0; x < level1.layers[LAYER_OBJECT_ENEMIES].width; x++)
+			{
+				if(level1.layers[LAYER_OBJECT_ENEMIES].data[idx] != 0)
+				{
+					var px = tileToPixel(x);
+					var py = tileToPixel(y);
+					var e = new Enemy(px, py);
+					enemies.push(e);
+				}
+				idx++;
+			}
 		}
-	idx++;
 	}
-}
+		//add ladder
+	//	idx = 0;
+	//	for(var y = 0; y < level1.layers[LAYER_LADDERS].height; y++)
+	//	{
+	//		for(var x = 0; x < level1.layers[LAYER_LADDERS].width; x++)
+	//		{
+	//			if(level1.layers[LAYER_LADDERS].data[idx] != 0)
+	//			{
+	//				var px = tileToPixel(x);
+	//				var py = tileToPixel(y);
+	//				var e = new Player(px, py);
+	//			}
+	//			idx++;
+	//		}
+	//	}
+	//}
 	backgroundMusic = new Howl(
 	{
 		urls: ["background.ogg"],
@@ -295,38 +319,41 @@ for(var y = 0; y < level1.layers[LAYER_OBJECT_ENEMIES].height; y++)
 
 }
 
-//var bullets = [];
-//var Bullet = function(x, y, moveRight)
-//{
-//this.sprite = new Sprite("RocketAnimationTile.png");
-//this.sprite.buildAnimation(4, 4, 48, 12, -1, [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]);
-//this.sprite.setAnimationOffset(0, 0, 0);
-//this.sprite.setLoop(0, false);
-//this.position = new Vector2();
-//this.position.set(x, y);
-//this.velocity = new Vector2();
-//this.moveRight = moveRight;
-//if(this.moveRight == true)
-//this.velocity.set(MAXDX *2, 0);
-//else
-//this.velocity.set(-MAXDX *2, 0);
-//}
+var bullets = [];
+var Bullet = function(x, y, moveRight)
+{
+this.sprite = new Sprite("RocketAnimationTile.png");
+this.sprite.buildAnimation(4, 4, 48, 12, -1, [0]);
+this.sprite.setAnimationOffset(0, 0, 0);
+this.sprite.setLoop(0, false);
+this.position = new Vector2();
+this.position.set(x, y);
+this.velocity = new Vector2();
+this.moveRight = moveRight;
+if(this.moveRight == true)
+	{ 
+	this.velocity.set(MAXDX *2, 0);
+	}
+else
+	{
+		this.velocity.set(-MAXDX *2, 0);
+	}
+}
 
 
 
+Bullet.prototype.update = function(deltaTime)
+{
+this.sprite.update(deltaTime);
+this.position.x = Math.floor(this.position.x + (deltaTime * this.velocity.x));
+}
 
-//Bullet.prototype.update = function(dt)
-//{
-//this.sprite.update(dt);
-//this.position.x = Math.floor(this.position.x + (dt * this.velocity.x));
-//}
 
-
-//Bullet.prototype.draw = function()
-//{
-//var screenX = this.position.x - worldOffsetX;
-//this.sprite.draw(context, screenX, this.position.y);
-//}
+Bullet.prototype.draw = function()
+{
+var screenX = this.position.x - worldOffsetX;
+this.sprite.draw(context, screenX, this.position.y);
+}
 
 
 
@@ -342,10 +369,6 @@ function run()
 	var deltaTime = getDeltaTime();
 
 
-context.fillStyle = "#8B0000";
-context.font="32px Arial";
-var scoreText = "Score: " + score;
-context.fillText(scoreText, SCREEN_WIDTH - 170, 35);
 
 
 for(var i=0; i<enemies.length; i++)
@@ -358,37 +381,37 @@ for(var i=0; i<enemies.length; i++)
 
 
 // bullets update and check for collisions with wall & enemies..
-//var hit=false;
-//	for(var i=0; i<bullets.length; i++)
-//	{
-//bullets[i].update(deltaTime);
+var hit=false;
+	for(var i=0; i<bullets.length; i++)
+	{
+     bullets[i].update(deltaTime);
 
-//	if( bullets[i].position.x - worldOffsetX < 0 ||
-//		bullets[i].position.x - worldOffsetX > SCREEN_WIDTH)
-//		{
-//		hit = true;
-//		}
+	if( bullets[i].position.x - worldOffsetX < 0 ||
+		bullets[i].position.x - worldOffsetX > SCREEN_WIDTH)
+		{
+		hit = true;
+		}
 
 
-//			for(var j=0; j<enemies.length; j++)
-//			{
-//				if(intersects( bullets[i].position.x, bullets[i].position.y, TILE, TILE,
-//				enemies[j].position.x, enemies[j].position.y, TILE, TILE) == true)
-//				{
+			for(var j=0; j<enemies.length; j++)
+			{
+				if(intersects( bullets[i].position.x, bullets[i].position.y, TILE, TILE,
+				enemies[j].position.x, enemies[j].position.y, TILE, TILE) == true)
+				{
 // kill both the bullet and the enemy
-//					enemies.splice(j, 1);
-//					hit = true;
+					enemies.splice(j, 1);
+					hit = true;
 /// increment the player score
-//					score += 1;
-//					break;
-//				}
-//			}
-//		if(hit == true)
-//		{
-//			bullets.splice(i, 1);
-//			break;
-//		}
-//	}
+					score += 1;
+					break;
+				}
+		}
+		if(hit == true)
+		{
+			bullets.splice(i, 1);
+			break;
+		}
+	}
 
 
  
@@ -400,7 +423,24 @@ for(var i=0; i<enemies.length; i++)
 	{
 		enemies[i].draw(deltaTime);
 	}
+
+	for(var i=0; i<bullets.length; i++)
+	{
+		bullets[i].draw(deltaTime);
+	}
 	player.draw();
+
+//set lives
+	for(var i=0; i<lives; i++)
+	{
+		context.drawImage(skull, 10 + ((skull.width+2)*i), 10)
+	}
+
+	// draw the score
+context.fillStyle = "#8B0000";
+context.font="32px Arial";
+var scoreText = "Score: " + score;
+context.fillText(scoreText, SCREEN_WIDTH - 170, 35);
 
 	//context.drawImage(chuckNorris, SCREEN_WIDTH/2 - chuckNorris.width/2, SCREEN_HEIGHT/2 - chuckNorris.height/2);
 	

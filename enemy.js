@@ -11,7 +11,7 @@ var ENEMY_SPEED = 100;
 
 
 
-var Enemy = function(x,y) 
+var Enemy = function(x, y) 
 {
 this.sprite = new Sprite("bat.png");
 
@@ -21,15 +21,14 @@ this.sprite = new Sprite("bat.png");
 this.sprite.buildAnimation(2, 1, 88, 94, 0.3,      // idle left
 [0, 1]);
 
-
-
 this.sprite.setAnimationOffset(0, -35, -40);
 
-
 this.position = new Vector2();
-this.position.set = (x,y);
+this.position.set(x, y);
 
+this.velocity = new Vector2();
 this.moveRight = true;
+
 this.pause = 0;
 
 //this.width= 20;
@@ -38,9 +37,9 @@ this.pause = 0;
 //this.offset = new Vector2();
 //this.offset.set = ( -55, -87);
 
-this.velocity = new Vector2();
 
-};
+
+}
 
 
 Enemy.prototype.update= function(deltaTime)
@@ -105,10 +104,10 @@ else
 Enemy.prototype.draw= function()
 	{
 
-	context.save();
-	context.translate(this.x, this.y);
-	//context.rotate(this.rotation);cc
+	//context.save();
+	//context.translate(this.x, this.y);
+	//context.rotate(this.rotation);
 	this.sprite.draw(context, this.position.x - worldOffsetX, this.position.y);
 	//context.drawImage(this.image, this.position.x - worldOffsetX , this.position.y);
-	context.restore();
+	//context.restore();
 	}
