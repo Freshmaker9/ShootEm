@@ -316,50 +316,9 @@ idx = 0;
 			isSfxPlaying = false;
 		}
 	});
-
-
 }
 
 var bullets = [];
-var Bullet = function(x, y, moveRight)
-{
-this.sprite = new Sprite("RocketAnimationTile.png");
-this.sprite.buildAnimation(4, 4, 48, 12, -1, [0]);
-this.sprite.setAnimationOffset(0, 0, 0);
-this.sprite.setLoop(0, false);
-this.position = new Vector2();
-this.position.set(x, y);
-this.velocity = new Vector2();
-this.moveRight = moveRight;
-if(this.moveRight == true)
-	{ 
-	this.velocity.set(MAXDX *2, 0);
-	}
-else
-	{
-		this.velocity.set(-MAXDX *2, 0);
-	}
-}
-
-
-
-Bullet.prototype.update = function(deltaTime)
-{
-this.sprite.update(deltaTime);
-this.position.x = Math.floor(this.position.x + (deltaTime * this.velocity.x));
-}
-
-
-Bullet.prototype.draw = function()
-{
-var screenX = this.position.x - worldOffsetX;
-this.sprite.draw(context, screenX, this.position.y);
-}
-
-
-
-
-
 
 
 function run()
@@ -379,14 +338,15 @@ for(var i=0; i<enemies.length; i++)
 
 
 	player.update(deltaTime);
-
-
+	
 // bullets update and check for collisions with wall & enemies..
-var hit=false;
+//var hit=false;
 	for(var i=0; i<bullets.length; i++)
 	{
      bullets[i].update(deltaTime);
+ 	}
 
+ 	/*
 	if( bullets[i].position.x - worldOffsetX < 0 ||
 		bullets[i].position.x - worldOffsetX > SCREEN_WIDTH)
 		{
@@ -412,7 +372,7 @@ var hit=false;
 			bullets.splice(i, 1);
 			break;
 		}
-	}
+	}*/
 
 
  

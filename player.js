@@ -69,6 +69,7 @@ this.cooldownTimer = 0;
 };
 
 
+
 Player.prototype.update= function(deltaTime)
 {
 
@@ -127,22 +128,21 @@ if(this.cooldownTimer >0)
 	this.cooldownTimer -= deltaTime;
 }
 
-
-
 if (keyboard.isKeyDown(keyboard.KEY_SPACE) == true && this.cooldownTimer <=0) 
 {
-	Bullet();
-	this.moveRight = moveRight;
+	var tempBullet = new Bullet();
+	this.moveRight = wasright;
 if(this.moveRight == true)
 		{ 
 		this.velocity.set(MAXDX *2, 0);
-		}
+		}                                                    //// need to fix here.. 
 	else
 		{
 		this.velocity.set(-MAXDX *2, 0);
 		}
 	this.cooldownTimer = 0.5; 	
-	bullets.push(Bullet);
+	bullets.push(tempBullet);
+	sfxFire.play();
 }
 
 
