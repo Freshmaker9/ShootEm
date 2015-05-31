@@ -61,6 +61,7 @@ this.velocity = new Vector2();
 this.falling = true;
 this.jumping = false;
 
+
 this.direction = RIGHT;
 
 this.cooldownTimer = 0;
@@ -76,7 +77,7 @@ Player.prototype.update= function(deltaTime)
 var left = false;
 var right = false;
 var jump = false;
-
+var playerIsDead = false;
 this.sprite.update(deltaTime);
 
 // check keypress events
@@ -128,22 +129,7 @@ if(this.cooldownTimer >0)
 	this.cooldownTimer -= deltaTime;
 }
 
-if (keyboard.isKeyDown(keyboard.KEY_SPACE) == true && this.cooldownTimer <=0) 
-{
-	var tempBullet = new Bullet();
-	this.moveRight = wasright;
-if(this.moveRight == true)
-		{ 
-		this.velocity.set(MAXDX *2, 0);
-		}                                                    //// need to fix here.. 
-	else
-		{
-		this.velocity.set(-MAXDX *2, 0);
-		}
-	this.cooldownTimer = 0.5; 	
-	bullets.push(tempBullet);
-	sfxFire.play();
-}
+
 
 
 var wasleft = this.velocity.x < 0;
@@ -151,6 +137,23 @@ var wasright = this.velocity.x > 0;
 var falling = this.falling;
 var ddx = 0; // acceleration
 var ddy = GRAVITY;
+
+if (keyboard.isKeyDown(keyboard.KEY_SPACE) == true && this.cooldownTimer <=0) 
+{
+	var tempBullet = new Bullet(this.position.x, this.position.y, LEFT, RIGHT, deltaTime);
+	/*this.moveRight = wasright;
+if(this.moveRight == true)
+		{ 
+		this.velocity.set(MAXDX *2, 1);
+		}
+	else
+		{
+		this.velocity.set(-MAXDX *2, 0);
+		}*/
+	this.cooldownTimer = 0.5; 	
+	bullets.push(tempBullet);
+	sfxFire.play();
+}
 
 if (left)
 ddx = ddx - ACCEL; // player wants to go left

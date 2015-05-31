@@ -319,7 +319,20 @@ idx = 0;
 }
 
 var bullets = [];
-
+// tests if two rectangles are intersecting.
+// Pass in the x,y coordinates, width and height of each rectangle.
+// Returns 'true' if the rectangles are intersecting
+function intersects(x1, y1, w1, h1, x2, y2, w2, h2)
+{
+	if( y2 + h2 < y1     || 
+		x2 + w2 < x1     ||
+		x2 > x1 + w1     ||
+		y2 > y1 + h1 )
+		{
+			return false;
+		}
+	return true;
+}
 
 function run()
 {
@@ -327,33 +340,58 @@ function run()
 	context.fillRect(0, 0, canvas.width, canvas.height);
 	
 	var deltaTime = getDeltaTime();
+	var hit = false;
 
-
-
+// attempt at player enemy intersects
 
 for(var i=0; i<enemies.length; i++)
-	{
+		{
 		enemies[i].update(deltaTime);
-	}
+		}
+			/*for (var j = 0; j < enemies.length; j++)
+				{
+				if (player.isDead == false)
+				{
+
+			if (intersects (player.x, player.y, player.height/2, player.width/2, 
+			enemies[j].position.x, enemies[j].position.y, TILE, TILE) == true)
+					{
+						enemies.splice( j, 1);
+						lives.splice( i , 1 );
+						//gameState = STATE_GAMEOVER;
+						player.position.set(startX);
+						break;
+					}*/
+	
+	
 
 
 	player.update(deltaTime);
+	//check to see if player is dead and reset attempt
+	for(var i=0; i<lives; i++)
+		{
+		context.drawImage(skull, 10 + ((skull.width+2)*i), 10)
+		}
+
+
+	
+	
 	
 // bullets update and check for collisions with wall & enemies..
 //var hit=false;
 	for(var i=0; i<bullets.length; i++)
-	{
+	{{
      bullets[i].update(deltaTime);
  	}
 
- 	/*
+ 	//check to see if bullets hit screen boundary
 	if( bullets[i].position.x - worldOffsetX < 0 ||
 		bullets[i].position.x - worldOffsetX > SCREEN_WIDTH)
 		{
 		hit = true;
 		}
 
-
+			//check if bullets hit enemies
 			for(var j=0; j<enemies.length; j++)
 			{
 				if(intersects( bullets[i].position.x, bullets[i].position.y, TILE, TILE,
@@ -372,7 +410,7 @@ for(var i=0; i<enemies.length; i++)
 			bullets.splice(i, 1);
 			break;
 		}
-	}*/
+	}
 
 
  
@@ -393,9 +431,7 @@ for(var i=0; i<enemies.length; i++)
 
 //set lives
 	for(var i=0; i<lives; i++)
-	{
-		context.drawImage(skull, 10 + ((skull.width+2)*i), 10)
-	}
+	
 
 	// draw the score
 context.fillStyle = "#8B0000";
