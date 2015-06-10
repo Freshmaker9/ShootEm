@@ -54,8 +54,11 @@ var enemy = new Enemy();
 var player = new Player();
 var keyboard = new Keyboard();
 var position = new Vector2();
-
-
+var STATE_SPLASH = 0;
+var STATE_GAME = 1;
+var STATE_GAMEOVER = 2;
+var STATE_GAMEWIN = 3;
+var gameState = STATE_SPLASH;
 var tileset = document.createElement("img");
 tileset.src = "tileset.png";
 
@@ -279,6 +282,18 @@ idx = 0;
 				idx++;
 			}
 		}
+		/*idx = 0;
+		for(var y = 0; y < level1.layers[LAYER_OBJECT_TRIGGERS].height; y++)
+		{
+			for(var x = 0; x < level1.layers[LAYER_OBJECT_TRIGGERS].width; x++)
+			{
+				if(level1.layers[LAYER_OBJECT_TRIGGERS].data[idx] != 0)
+				{
+					;
+				}
+				idx++;
+			}
+		}*/
 	}
 		//add ladder
 	//	idx = 0;
@@ -298,17 +313,17 @@ idx = 0;
 	//}
 	backgroundMusic = new Howl(
 	{
-		urls: ["background.ogg"],
+		urls: ["DayAndNight.wav"],
 		loop: true,
 		buffer: true,
-		volume: 0.0
+		volume: 0.2
 	});
 
 	backgroundMusic.play();
 
 	sfxFire = new Howl(
 	{
-		urls: ["fireEffect.ogg"],
+		urls: ["shot_gun.wav"],
 		buffer: true,
 		volume: 1,
 		onend: function()
@@ -334,45 +349,82 @@ function intersects(x1, y1, w1, h1, x2, y2, w2, h2)
 	return true;
 }
 
-function run()
+
+
+
+
+var splashTimer = 5;
+function runSplash (deltaTime)
 {
-	context.fillStyle = "#ccc";		
-	context.fillRect(0, 0, canvas.width, canvas.height);
-	
-	var deltaTime = getDeltaTime();
+
+	/*var backgroundImage = document.createElement("img");
+backgroundImage.src = "space.pic.png";*/
+
+	splashTimer -= deltaTime;
+		
+	if(splashTimer <= 0)
+			{
+			gameState = STATE_GAME;
+			return;
+			}
+				
+	context.fillStyle = "#F8F8FF";
+context.fillRect(0, 0, canvas.width, canvas.height);
+
+var RAMJO = 
+	{
+		image: document.createElement("img"),
+	};
+	RAMJO.image.src = "cooltextRAMJO.png";
+
+var KILL = 
+	{
+		image: document.createElement("img"),
+	};
+	KILL.image.src = "cooltextTRYTOKILLALLBATS.png";
+
+
+context.drawImage(RAMJO.image, 50, 100)
+
+context.drawImage(KILL.image, 50, 300)
+}
+
+
+
+
+
+
+
+function runGame(deltaTime)
+{
 	var hit = false;
 
 // attempt at player enemy intersects
 
 for(var i=0; i<enemies.length; i++)
-		{
-		enemies[i].update(deltaTime);
-		}
-			/*for (var j = 0; j < enemies.length; j++)
+			{
+			enemies[i].update(deltaTime);
+			}
+		/*		for (var i = 0; i < enemies.length; i++)
 				{
 				if (player.isDead == false)
 				{
 
 			if (intersects (player.x, player.y, player.height/2, player.width/2, 
-			enemies[j].position.x, enemies[j].position.y, TILE, TILE) == true)
+			enemies[i].position.x, enemies[i].position.y, TILE, TILE) == true)
 					{
-						enemies.splice( j, 1);
+						enemies.splice( i, 1);
 						lives.splice( i , 1 );
 						//gameState = STATE_GAMEOVER;
 						player.position.set(startX);
 						break;
-					}*/
-	
+					}
+		*/
 	
 
 
 	player.update(deltaTime);
-	//check to see if player is dead and reset attempt
-	for(var i=0; i<lives; i++)
-		{
-		context.drawImage(skull, 10 + ((skull.width+2)*i), 10)
-		}
-
+	
 
 	
 	
@@ -413,7 +465,12 @@ for(var i=0; i<enemies.length; i++)
 	}
 
 
- 
+ //run endgame if score == 9.
+
+if (score == 9)
+{
+	gameState = STATE_GAMEWIN;
+}
 
 
 	drawMap();
@@ -438,6 +495,73 @@ context.fillStyle = "#8B0000";
 context.font="32px Arial";
 var scoreText = "Score: " + score;
 context.fillText(scoreText, SCREEN_WIDTH - 170, 35);
+
+//check to see if player is dead and reset attempt
+	for(var i=0; i<lives; i++)
+		{
+		context.drawImage(skull, 10 + ((skull.width+2)*i), 10)
+		}
+
+}
+
+function runGameOver(deltaTime)
+{
+	context.fillStyle = "#FF0000";
+		context.font="48px Algerian";
+		context.fillText("YOU DIED", 200, 240);
+		
+		context.font="24px Algerian";
+		context.fillText("score" + score, 200, 300);
+		context.fillText("Try to kill all the Enemies", 200, 360);
+}
+
+function runGameWin(deltaTime)
+{
+
+	context.fillStyle = "#000000";		
+	context.fillRect(0, 0, canvas.width, canvas.height);
+
+	context.fillStyle = "#FF0000";
+		context.font="48px Algerian";
+		context.fillText("WINNER", 200, 240);
+		
+		context.font="24px Algerian";
+		context.fillText("score" + score, 200, 300);
+		context.fillText("Nice work", 200, 360);
+
+
+		context.font="24px Algerian";
+
+		
+		context.fillText("press F5 to play this Awesomeness game again", 20, 420);
+}
+
+function run()
+{
+	context.fillStyle = "#ccc";		
+	context.fillRect(0, 0, canvas.width, canvas.height);
+	
+	var deltaTime = getDeltaTime();
+
+switch (gameState)
+	{
+		
+		case STATE_SPLASH:
+		runSplash(deltaTime);
+		break;
+		
+		case STATE_GAME:
+		runGame (deltaTime);
+		break;
+		
+		case STATE_GAMEOVER:
+		runGameOver (deltaTime);
+		break;
+		
+		case STATE_GAMEWIN: 
+		runGameWin (deltaTime);
+		break;
+	}
 
 	//context.drawImage(chuckNorris, SCREEN_WIDTH/2 - chuckNorris.width/2, SCREEN_HEIGHT/2 - chuckNorris.height/2);
 	
